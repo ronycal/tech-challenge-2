@@ -1,0 +1,24 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "Hello World application for Docker, AWS EKS, Terraform, Helm, and Jenkins Tech Challenge",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "docker",
+    "terraform",
+    "kubernetes",
+    "eks",
+    "jenkins",
+    "helm"
+  ],
+  "author": "Rony Calixte",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
