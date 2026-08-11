@@ -56,3 +56,8 @@ Thumbs.db
 # =========================
 .env
 .env.*
+
+# AWS CLI downloads
+aws/
+*.zip
+*.tar.gz
