@@ -24,10 +24,14 @@ pipeline {
             steps {
                 sh '''
                     whoami
+                    pwd
+                    ls -la
+
                     docker --version
                     aws --version
                     kubectl version --client
                     helm version
+
                     docker ps
                 '''
             }
@@ -86,16 +90,16 @@ pipeline {
                         credentialsId: 'aws-credentials',
                         usernameVariable: 'AWS_ACCESS_KEY_ID',
                         passwordVariable: 'AWS_SECRET_ACCESS_KEY'
-            )
-        ]) {
-            sh '''
-                aws eks update-kubeconfig \
-                    --region ${AWS_REGION} \
-                    --name ${CLUSTER_NAME}
-            '''
+                    )
+                ]) {
+                    sh '''
+                        aws eks update-kubeconfig \
+                            --region ${AWS_REGION} \
+                            --name ${CLUSTER_NAME}
+                    '''
+                }
+            }
         }
-    }
-}
 
         stage('Deploy with Helm') {
             steps {
@@ -104,30 +108,32 @@ pipeline {
                         credentialsId: 'aws-credentials',
                         usernameVariable: 'AWS_ACCESS_KEY_ID',
                         passwordVariable: 'AWS_SECRET_ACCESS_KEY'
-            )
-        ]) {
-                sh '''
-                    helm upgrade --install hello-world ./helm/hello-world \
-                        --set image.repository=${ECR_URI} \
-                        --set image.tag=${IMAGE_TAG}
-                '''
+                    )
+                ]) {
+                    sh '''
+                        helm upgrade --install hello-world ./helm/hello-world \
+                            --set image.repository=${ECR_URI} \
+                            --set image.tag=${IMAGE_TAG}
+                    '''
+                }
             }
         }
 
         stage('Verify Deployment') {
             steps {
-                 withCredentials([
-            usernamePassword(
-                credentialsId: 'aws-credentials',
-                usernameVariable: 'AWS_ACCESS_KEY_ID',
-                passwordVariable: 'AWS_SECRET_ACCESS_KEY'
-            )
-        ]) {
-                sh '''
-                    kubectl get pods
-                    kubectl get svc
-                    kubectl get ingress
-                '''
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'aws-credentials',
+                        usernameVariable: 'AWS_ACCESS_KEY_ID',
+                        passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    sh '''
+                        kubectl get pods
+                        kubectl get svc
+                        kubectl get ingress
+                    '''
+                }
             }
         }
     }
