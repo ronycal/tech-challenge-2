@@ -99,6 +99,13 @@ pipeline {
 
         stage('Deploy with Helm') {
             steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'aws-credentials',
+                        usernameVariable: 'AWS_ACCESS_KEY_ID',
+                        passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+            )
+        ]) {
                 sh '''
                     helm upgrade --install hello-world ./helm/hello-world \
                         --set image.repository=${ECR_URI} \
@@ -109,6 +116,13 @@ pipeline {
 
         stage('Verify Deployment') {
             steps {
+                 withCredentials([
+            usernamePassword(
+                credentialsId: 'aws-credentials',
+                usernameVariable: 'AWS_ACCESS_KEY_ID',
+                passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+            )
+        ]) {
                 sh '''
                     kubectl get pods
                     kubectl get svc
